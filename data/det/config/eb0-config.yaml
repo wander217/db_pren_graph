@@ -1,0 +1,113 @@
+total_epoch: 500
+start_epoch: 1
+
+structure:
+  model:
+    backbone:
+      type: 'b0'
+      stochastic_depth_prob: 0.2
+      use_se: True
+    neck:
+      data_point: [ 24, 40, 112, 1280 ]
+      exp: 256
+    head:
+      k: 50
+      exp: 256
+      adaptive: True
+
+  loss_fn:
+    thresh_scale: 10
+    thresh_loss:
+      eps: !!float '1e-6'
+    prob_scale: 5
+    prob_loss:
+      ratio: 3.
+      eps: !!float '1e-6'
+    binary_scale: 1
+    binary_loss:
+      eps: !!float '1e-6'
+
+acc_fn:
+  score:
+    box_num: 1000
+    edge_thresh: 3
+    label: 'binary_map'
+  accurancy:
+    ignore_thresh: 0.5
+    acc_thresh: 0.5
+
+train:
+  batch_size: 8
+  num_workers: 2
+  drop_last: True
+  shuffle: True
+  pin_memory: False
+  dataset:
+    path: '../input/ic17train/train'
+    preprocess:
+      DBAugmenter:
+        p: 0.3
+        Fliplr:
+          p: 0.5
+        Affine:
+          rotate: [ -10, 10 ]
+        Resize:
+          size: [ 0.5, 3. ]
+      DBRandomCrop:
+        min_crop: 0.1
+        max_tries: 10
+        size: [ 640, 640 ]
+      DBICDAR:
+        shrink_ratio: 0.4
+      DBProbLabel:
+        shrink_ratio: 0.4
+        min_text_size: 8
+      DBThreshLabel:
+        expand_ratio: 0.6
+        thresh_min: 0.3
+        thresh_max: 0.7
+      DBNormalize:
+        mean: [ 122.67891434, 116.66876762, 104.00698793 ]
+      DBFilter:
+        key: [ 'polygon', 'shape', 'ignore', 'is_train' ]
+
+valid:
+  batch_size: 1
+  num_workers: 4
+  drop_last: False
+  shuffle: False
+  pin_memory: False
+  dataset:
+    path: '../input/vninvoice/valid'
+    preprocess:
+      DBAugmenter:
+        Resize:
+          size: { "height": 800, "width": 800 }
+      DBICDAR:
+        shrink_ratio: 0.4
+      DBProbLabel:
+        shrink_ratio: 0.4
+        min_text_size: 8
+      DBThreshLabel:
+        expand_ratio: 0.4
+        thresh_min: 0.3
+        thresh_max: 0.7
+      DBNormalize:
+        mean: [ 122.67891434, 116.66876762, 104.00698793 ]
+      DBFilter:
+        key: [ 'is_train' ]
+
+optimizer:
+  name: Adam
+  argument:
+    betas: [ 0.9, 0.999 ]
+    lr: 0.001
+    eps: !!float '1e-8'
+
+checkpoint:
+  workspace: './'
+  resume: ''
+
+logger:
+  workspace: './'
+  level: INFO
