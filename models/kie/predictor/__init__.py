@@ -1,0 +1,1 @@
+from .kie_predictor import KIEPredictor

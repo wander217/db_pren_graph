@@ -1,0 +1,49 @@
+total_epoch: 1000
+start_epoch: 1
+
+alphabet:
+  path: 'data/kie/config/viet_alphabet.txt'
+
+label:
+  path: 'data/kie/config/label.json'
+
+model:
+  n_dim_node: 10
+  n_dim_edge: 2
+  n_hidden: 512
+  dropout: 0
+  n_layer: 8
+
+criterion:
+  ohem: 3
+
+optimizer:
+  name: 'Adam'
+  params:
+    lr: 0.001
+
+train:
+  batch_size: 24
+  num_workers: 4
+  drop_last: True
+  shuffle: True
+  pin_memory: False
+  dataset:
+    path: '../input/invoicedts/train'
+
+valid:
+  batch_size: 24
+  num_workers: 4
+  drop_last: True
+  shuffle: False
+  pin_memory: False
+  dataset:
+    path: '../input/invoicedts/valid'
+
+checkpoint:
+  workspace: './'
+  resume: ''
+
+logger:
+  workspace: './'
+  level: 'INFO'

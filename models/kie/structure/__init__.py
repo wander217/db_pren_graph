@@ -1,0 +1,1 @@
+from .kie_model import GateGCNNet
