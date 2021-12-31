@@ -1,4 +1,4 @@
-total_epoch: 8
+total_epoch: 15
 start_epoch: 1
 save_interval: 1000
 clip_grad_norm: 1
@@ -15,22 +15,22 @@ model:
     dropout: 0.1
 
 train:
-  batch_size: 128
+  batch_size: 32
   num_workers: 8
   drop_last: True
   shuffle: True
   pin_memory: False
   dataset:
-    path: '../input/vietocr'
+    path: '../input/newocr/train'
 
 valid:
-  batch_size: 128
+  batch_size: 32
   num_workers: 8
   drop_last: True
   shuffle: False
   pin_memory: False
   dataset:
-    path: '../input/vietocr'
+    path: '../input/newocr/valid'
 
 optimizer:
   name: 'Adam'

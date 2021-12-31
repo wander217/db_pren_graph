@@ -33,6 +33,7 @@ class DBRandomCrop:
         if len(target_list) != 0:
             data['annotation'] = target_list
             data['image'] = ex_image
+        print(len(data['annotation']))
         return data
 
     def __crop_area(self, img: np.ndarray, polygon_list: list) -> tuple:
@@ -40,27 +41,29 @@ class DBRandomCrop:
             Hàm thực hiện cắt ảnh.
         '''
         h, w, _ = img.shape
-        h_axis: np.ndarray = np.zeros(h, dtype=np.int32)
-        w_axis: np.ndarray = np.zeros(w, dtype=np.int32)
-
-        for polygon in polygon_list:
-            tmp: np.ndarray = np.round(polygon, decimals=0).astype(np.int32)
-            w_axis = self.__mask_down(w_axis, tmp, 0)
-            h_axis = self.__mask_down(h_axis, tmp, 1)
-
-        h_not_mask: np.ndarray = np.where(h_axis == 0)[0]
-        w_not_mask: np.ndarray = np.where(w_axis == 0)[0]
-        if len(h_not_mask) == 0 or len(w_not_mask) == 0:
-            return 0, 0, w, h
-        h_region: list = self.__split_region(h_not_mask)
-        w_region: list = self.__split_region(w_not_mask)
-
+        # h_axis: np.ndarray = np.zeros(h, dtype=np.int32)
+        # w_axis: np.ndarray = np.zeros(w, dtype=np.int32)
+        #
+        # for polygon in polygon_list:
+        #     tmp: np.ndarray = np.round(polygon, decimals=0).astype(np.int32)
+        #     w_axis = self.__mask_down(w_axis, tmp, 0)
+        #     h_axis = self.__mask_down(h_axis, tmp, 1)
+        #
+        # h_not_mask: np.ndarray = np.where(h_axis == 0)[0]
+        # w_not_mask: np.ndarray = np.where(w_axis == 0)[0]
+        # if len(h_not_mask) == 0 or len(w_not_mask) == 0:
+        #     return 0, 0, w, h
+        # h_region: list = self.__split_region(h_not_mask)
+        # w_region: list = self.__split_region(w_not_mask)
+        #
         w_min: float = self.min_crop * w
         h_min: float = self.min_crop * h
 
         for _ in range(self.max_tries):
-            x_min, x_max = self.__crop(w_region, w_not_mask, w)
-            y_min, y_max = self.__crop(h_region, h_not_mask, h)
+            tmp = np.random.choice(w, 2)
+            x_min, x_max = min(tmp), max(tmp)
+            tmp = np.random.choice(h, 2)
+            y_min, y_max = min(tmp), max(tmp)
             if x_max - x_min + 1 < w_min or y_max - y_min + 1 < h_min:
                 continue
             for polygon in polygon_list:

@@ -8,23 +8,23 @@ import cv2 as cv
 
 
 class DBPredictor:
-    def __init__(self, config_path: str, pretrained: str):
+    def __init__(self, config: str, pretrained: str):
         self.device = torch.device("cpu")
         if torch.cuda.is_available():
             self.device = torch.device("cuda")
-        with open(config_path) as f:
+        with open(config) as f:
             data: Dict = yaml.safe_load(f)
         self.model = DBNetwork(**data['structure'], device=self.device)
         print(sum(p.numel() for p in self.model.parameters() if p.requires_grad))
         state_dict = torch.load(pretrained, map_location=self.device)
         self.model.load_state_dict(state_dict['model'])
-        self.limit: int = 960
+        self.limit: int = 1024
 
     def predict(self, image: np.ndarray) -> List:
         self.model.eval()
         with torch.no_grad():
             org_h, org_w, _ = image.shape
-            res_image, new_w, new_h = resize(image)
+            res_image, new_w, new_h = resize(image, self.limit)
             image = normalize(res_image)
             pred = self.model.predict(image)
             prob_map = pred.cpu().detach().numpy()[0][0]
@@ -47,5 +47,5 @@ class DBPredictor:
                 box[:, 0] = np.clip(box[:, 0].astype(np.float32) * org_w / new_w, 0, org_w - 1)
                 box[:, 1] = np.clip(box[:, 1].astype(np.float32) * org_h / new_h, 0, org_h - 1)
                 x1_min, y1_min, x1_max, y1_max = find_key(box.astype(np.int16))
-                box_list.append([x1_min, x1_max, y1_min, y1_max])
+                box_list.append([x1_min, y1_min, x1_max, y1_max])
         return box_list

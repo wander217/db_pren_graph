@@ -9,11 +9,11 @@ import yaml
 
 
 class PRENPredictor:
-    def __init__(self, config_path: str, pretrained: str):
+    def __init__(self, config: str, pretrained: str):
         self.device = torch.device("cpu")
         if torch.cuda.is_available():
             self.device = torch.device("cuda")
-        with open(config_path) as f:
+        with open(config) as f:
             data: Dict = yaml.safe_load(f)
         self.alphabet: Alphabet = Alphabet(**data['alphabet'])
         self.model: nn.Module = PRENModel(self.alphabet, **data['model'])

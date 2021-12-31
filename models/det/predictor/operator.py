@@ -10,10 +10,13 @@ from typing import List, Tuple
 
 def resize(image: np.ndarray, limit: int = 960) -> Tuple:
     org_h, org_w, _ = image.shape
-    new_w: int = limit
-    new_h: int = int((org_h / org_w) * new_w)
-    new_h = math.floor(new_h / 32) * 32
-    new_image = cv.resize(image, (new_w, new_h), interpolation=cv.INTER_CUBIC)
+    scale = min(limit / org_h, limit / org_w)
+    new_w = int(org_w * scale)
+    new_h = int(org_h * scale)
+    new_image = np.zeros((math.ceil(new_h / 32) * 32,
+                          math.ceil(new_w / 32) * 32, 3), dtype=np.uint8)
+    image = cv.resize(image, (new_w, new_h), interpolation=cv.INTER_CUBIC)
+    new_image[:new_h, :new_w, :] = image
     return new_image, new_w, new_h
 
 

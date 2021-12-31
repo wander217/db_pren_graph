@@ -8,3 +8,7 @@ imgaug
 pyclipper
 python-Levenshtein
 Pillow
+dgl
+scikit-learn
+streamlit
+vietocr

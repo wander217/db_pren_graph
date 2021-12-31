@@ -1,14 +1,15 @@
-total_epoch: 500
+total_epoch: 1200
 start_epoch: 1
 
 structure:
   model:
     backbone:
-      type: 'b0'
+      type: 'b3'
       stochastic_depth_prob: 0.2
       use_se: True
     neck:
-      data_point: [ 24, 40, 112, 1280 ]
+#      data_point: [ 24, 40, 112, 1280 ]
+      data_point: [32, 48, 136, 1536]
       exp: 256
     head:
       k: 50
@@ -43,14 +44,15 @@ train:
   shuffle: True
   pin_memory: False
   dataset:
-    path: '../input/ic17train/train'
+    path: '../input/icdar15/train'
     preprocess:
       DBAugmenter:
-        p: 0.3
         Fliplr:
           p: 0.5
         Affine:
-          rotate: [ -10, 10 ]
+          rotate: [ -15, 15 ]
+          shear: [-15, 15]
+          fit_output: True
         Resize:
           size: [ 0.5, 3. ]
       DBRandomCrop:
@@ -63,7 +65,7 @@ train:
         shrink_ratio: 0.4
         min_text_size: 8
       DBThreshLabel:
-        expand_ratio: 0.6
+        expand_ratio: 0.4
         thresh_min: 0.3
         thresh_max: 0.7
       DBNormalize:
@@ -78,16 +80,16 @@ valid:
   shuffle: False
   pin_memory: False
   dataset:
-    path: '../input/vninvoice/valid'
+    path: '../input/icdar15/valid'
     preprocess:
       DBAugmenter:
         Resize:
-          size: { "height": 800, "width": 800 }
+          size: { "height": 736, "width": 1280 }
       DBICDAR:
         shrink_ratio: 0.4
       DBProbLabel:
         shrink_ratio: 0.4
-        min_text_size: 8
+        min_text_size: 1
       DBThreshLabel:
         expand_ratio: 0.4
         thresh_min: 0.3

@@ -7,12 +7,12 @@ from typing import List
 
 
 class DBAugmenter:
-    def __init__(self, p: float, **kwargs):
+    def __init__(self, **kwargs):
         module_list: list = []
         for key, item in kwargs.items():
             module = getattr(iaa, key)
             if module is not None:
-                module_list.append(iaa.Sometimes(p, module(**item)))
+                module_list.append(module(**item))
         self.preprocess = None
         if len(module_list) != 0:
             self.preprocess = iaa.Sequential(module_list)
@@ -27,26 +27,24 @@ class DBAugmenter:
             aug = self.preprocess.to_deterministic()
             # Nếu là valid thì chỉ resize
             if not data['is_train']:
-                data['image'] = self.__resize(image, only_resize)
+                data['image'] = self.__resize(image)
             else:
                 data['image'] = aug.augment_image(image)
             data = self.__make_annotation(aug, data, shape, only_resize)
         data.update(shape=data['image'].shape[:2])
         return data
 
-    def __resize(self, image: np.ndarray, keep_ratio: bool) -> tuple:
+    def __resize(self, image: np.ndarray) -> tuple:
         '''
             Resize ảnh
         '''
         org_h, org_w, _ = image.shape
-        new_w: float = self.new_size['width']
         new_h: float = self.new_size['height']
         # Nếu giữ tỉ lệ thì đảm bảo cho luôn chia hết cho 32
         # Do trong bước upsampling nếu không chia hết cho 32
         # ảnh sẽ bị lẻ kích thước dẫn đến sai kích thước input
-        if keep_ratio:
-            new_w = org_w / org_h * new_h
-            new_w = math.floor(new_w / 32) * 32
+        new_w = org_w / org_h * new_h
+        new_w = math.floor(new_w / 32) * 32
         image = cv.resize(image, (new_w, new_h))
         return image
 
@@ -84,7 +82,7 @@ class DBAugmenter:
             target_list.append({
                 'label': label,
                 'polygon': new_polygon,
-                'ignore': label == "###"
+                'ignore': False
             })
         data['annotation'] = target_list
         return data

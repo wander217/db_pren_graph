@@ -74,5 +74,5 @@ class DBThreshLabel:
         sq_sin: np.ndarray = 1 - np.square(cosin)
         sq_sin = np.nan_to_num(sq_sin)
         dist: np.ndarray = np.sqrt(sq_dist_1 * sq_dist_2 * sq_sin / sq_dist_3)
-        dist[cosin > 0] = np.sqrt(np.fmin(sq_dist_1, sq_dist_2))[cosin > 0]
+        dist[cosin >= 0] = np.sqrt(np.fmin(sq_dist_1, sq_dist_2))[cosin >= 0]
         return dist
