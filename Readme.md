@@ -10,5 +10,5 @@ streamlit run app.py
 ```
 Để thực hiện trích xuất hóa đơn phải có dạng như trong file data/image
 <p align="center">
-<img src="data/image/image9.jpg" width="608" height="1024">
+<img src="data/image/image9.jpg" width="304" height="512">
 </p>
