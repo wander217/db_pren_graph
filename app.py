@@ -31,14 +31,18 @@ def download(url: str, out: str):
 def load_det():
     config_path = r'data/det/config/eb0-config.yaml'
     pretrained_path = r'data/det/pretrained/det_pretrained.pth'
-    weight = gdown.download(det_id, pretrained_path)
+    weight = pretrained_path
+    if not os.path.isfile(pretrained_path):
+        weight = gdown.download(det_id, pretrained_path)
     return DBPredictor(config_path, weight)
 
 
 def load_rec():
     # config_path = r"data/rec/config/pc_eb3.yaml"
     # pretrained_path = r'data/rec/pretrained/rec_pretrained.pth'
-    # weight = gdown.download(rec_id, pretrained_path)
+    # weight = pretrained_path
+    # if not os.path.isfile(pretrained_path):
+    #     weight = gdown.download(rec_id, pretrained_path)
     # PRENPredictor(config_path, weight)
     config = Cfg.load_config_from_name('vgg_transformer')
     config['weights'] = 'https://drive.google.com/uc?id=13327Y1tz1ohsm5YZMyXVMPIOjoOA0OaA'
@@ -52,7 +56,9 @@ def load_rec():
 def load_kie():
     config_path = r'data/kie/config/gcn-config.yaml'
     pretrained_path = r'data/kie/pretrained/kie_pretrained.pth'
-    weight = gdown.download(kie_id, pretrained_path)
+    weight = pretrained_path
+    if not os.path.isfile(pretrained_path):
+        weight = gdown.download(det_id, pretrained_path)
     return KIEPredictor(config_path, weight)
 
 
@@ -144,7 +150,7 @@ def main():
                                       ("\t" * 25) + "Empty" + ("\t" * 25)]], columns=col_name)
     with option_col2:
         #     st.table(pd_data)
-        placeholder = st.empty().dataframe(pd_data)
+        placeholder = st.dataframe(pd_data)
 
     total_text = None
     det_text = None
@@ -169,6 +175,7 @@ def main():
                     #     image = cv.rotate(image, cv.ROTATE_90_CLOCKWISE)
 
                     if submit:
+                        st.balloons()
                         if total_text is not None:
                             total_text.empty()
                         if det_text is not None:
@@ -182,9 +189,10 @@ def main():
                         image, result, det_time, rec_time, kie_time = process(det, rec, kie, image)
                         pd_data = pd.DataFrame(data=result, columns=col_name)
                         with container2:
-                            st.image(image)
+                            st.image(image, width=500)
                         with option_col2:
-                            placeholder.dataframe(pd_data)
+                            placeholder.empty()
+                            placeholder = st.dataframe(pd_data, width=1200)
                         wait_text.empty()
                         total_text = st.text("Total time: {}s".format(det_time + rec_time + kie_time))
                         det_text = st.text("Detection time: {}s".format(det_time))
