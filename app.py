@@ -1,9 +1,10 @@
+import os.path
 import time
 
 import pandas
 import streamlit as st
 import torch
-
+import gdown
 from models.det.predictor import DBPredictor
 from models.kie.predictor import KIEPredictor
 from PIL import Image
@@ -13,20 +14,32 @@ import networkx as nx
 import pandas as pd
 from vietocr.tool.predictor import Predictor
 from vietocr.tool.config import Cfg
+from torchvision.datasets.utils import download_file_from_google_drive
+
+from models.rec import PRENPredictor
 
 st.set_page_config(layout="wide")
+det_id = 'https://drive.google.com/uc?id=1VNdfZpEzpwVjWBnJQYDm0wehrcakF0Pt'
+rec_id = 'https://drive.google.com/uc?id=1XsvP-gOl8azcMR5VkK_SCdpbpKMRuVh0'
+kie_id = 'https://drive.google.com/uc?id=1bEhDefCj5IWbXV5xfUlluTbNquAqzvxm'
+
+
+def download(url: str, out: str):
+    return gdown.cached_download(url, out, md5=None, quiet=False)
 
 
 def load_det():
     config_path = r'data/det/config/eb0-config.yaml'
-    pretrained_path = r'data/det/pretrained/best.pth'
-    return DBPredictor(config_path, pretrained_path)
+    pretrained_path = r'data/det/pretrained/det_pretrained.pth'
+    weight = gdown.download(det_id, pretrained_path)
+    return DBPredictor(config_path, weight)
 
 
 def load_rec():
     # config_path = r"data/rec/config/pc_eb3.yaml"
-    # pretrained_path = r"data/rec/pretrained/checkpoint66000.pth"
-    # return PRENPredictor(config_path, pretrained_path)
+    # pretrained_path = r'data/rec/pretrained/rec_pretrained.pth'
+    # weight = gdown.download(rec_id, pretrained_path)
+    # PRENPredictor(config_path, weight)
     config = Cfg.load_config_from_name('vgg_transformer')
     config['weights'] = 'https://drive.google.com/uc?id=13327Y1tz1ohsm5YZMyXVMPIOjoOA0OaA'
     config['cnn']['pretrained'] = False
@@ -38,8 +51,9 @@ def load_rec():
 
 def load_kie():
     config_path = r'data/kie/config/gcn-config.yaml'
-    pretrained_path = r'data/kie/pretrained/best.pth'
-    return KIEPredictor(config_path, pretrained_path)
+    pretrained_path = r'data/kie/pretrained/kie_pretrained.pth'
+    weight = gdown.download(kie_id, pretrained_path)
+    return KIEPredictor(config_path, weight)
 
 
 @st.cache(allow_output_mutation=True, show_spinner=False)
@@ -126,8 +140,8 @@ def main():
     option_col1, option_col2 = st.columns(2)
 
     col_name = ["TEXT", "LABEL"]
-    pd_data = pandas.DataFrame(data=[[("\t"*30)+"Empty"+("\t"*30),
-                                      ("\t"*25)+"Empty"+("\t"*25)]], columns=col_name)
+    pd_data = pandas.DataFrame(data=[[("\t" * 30) + "Empty" + ("\t" * 30),
+                                      ("\t" * 25) + "Empty" + ("\t" * 25)]], columns=col_name)
     with option_col2:
         #     st.table(pd_data)
         placeholder = st.empty().dataframe(pd_data)

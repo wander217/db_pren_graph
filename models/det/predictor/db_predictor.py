@@ -8,7 +8,7 @@ import cv2 as cv
 
 
 class DBPredictor:
-    def __init__(self, config: str, pretrained: str):
+    def __init__(self, config: str, pretrained):
         self.device = torch.device("cpu")
         if torch.cuda.is_available():
             self.device = torch.device("cuda")

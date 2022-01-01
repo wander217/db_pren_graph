@@ -12,3 +12,4 @@ dgl
 scikit-learn
 streamlit
 vietocr
+tensorboard
