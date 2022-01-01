@@ -9,10 +9,8 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 Để thực hiện trích xuất hóa đơn phải có dạng như trong file data/image
-<p align="left">
+<p align="center">
     <img src="data/image/image596.jpg" width="304" height="512">
-</p>
-<p align="right">
     <img src="data/result/result2.jpeg" width="304" height="512">
 </p>
 <p align="center">
