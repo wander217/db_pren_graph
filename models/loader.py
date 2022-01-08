@@ -6,7 +6,7 @@ from models.det.predictor import DBPredictor
 from models.kie.predictor import KIEPredictor
 
 det_id = 'https://drive.google.com/uc?id=1VNdfZpEzpwVjWBnJQYDm0wehrcakF0Pt'
-rec_id = 'https://drive.google.com/uc?id=1XsvP-gOl8azcMR5VkK_SCdpbpKMRuVh0'
+rec_id = 'https://drive.google.com/uc?id=1xYy8kmCxWmbguUUZWcMtBhPP3XyXIkRg'
 kie_id = 'https://drive.google.com/uc?id=1bEhDefCj5IWbXV5xfUlluTbNquAqzvxm'
 
 
@@ -26,8 +26,14 @@ def load_det():
 
 
 def load_rec():
+    pretrained_path = r'data/rec/pretrained/rec_pretrained.pth'
+    weight = pretrained_path
+    if not os.path.isfile(pretrained_path):
+        weight = gdown.download(rec_id, pretrained_path)
+    else:
+        print("File exist: {}".format(pretrained_path))
     config = Cfg.load_config_from_name('vgg_transformer')
-    config['weights'] = 'https://drive.google.com/uc?id=13327Y1tz1ohsm5YZMyXVMPIOjoOA0OaA'
+    config['weights'] = weight
     config['cnn']['pretrained'] = False
     del config['cnn']['pretrained']
     config['device'] = 'cpu'
