@@ -1,9 +1,8 @@
-import cv2
 import numpy as np
 import torch
 from torch import nn, Tensor
 from models.rec.dataset import Alphabet, resize, normalize
-from typing import Dict, Tuple
+from typing import Dict
 from models.rec.structure import PRENModel
 import yaml
 
