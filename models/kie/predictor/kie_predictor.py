@@ -19,7 +19,7 @@ class KIEPredictor:
         self.model = GateGCNNet(self.alphabet.size(),
                                 n_class=self.doc.size(),
                                 **data['model'])
-        print(sum(p.numel() for p in self.model.parameters() if p.requires_grad))
+        # print(sum(p.numel() for p in self.model.parameters() if p.requires_grad))
         state_dict = torch.load(pretrained, map_location=self.device)
         self.model.load_state_dict(state_dict['model'])
 

@@ -15,7 +15,7 @@ class DBPredictor:
         with open(config) as f:
             data: Dict = yaml.safe_load(f)
         self.model = DBNetwork(**data['structure'], device=self.device)
-        print(sum(p.numel() for p in self.model.parameters() if p.requires_grad))
+        # print(sum(p.numel() for p in self.model.parameters() if p.requires_grad))
         state_dict = torch.load(pretrained, map_location=self.device)
         self.model.load_state_dict(state_dict['model'])
         self.limit: int = 1024
