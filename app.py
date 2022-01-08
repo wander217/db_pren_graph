@@ -125,7 +125,6 @@ def main():
                     #     image = cv.rotate(image, cv.ROTATE_90_CLOCKWISE)
 
                     if submit:
-                        st.balloons()
                         if total_text is not None:
                             total_text.empty()
                         if det_text is not None:
@@ -138,6 +137,7 @@ def main():
                         wait_text = st.text("Please wait ...")
                         image, result, det_time, rec_time, kie_time = process(det, rec, kie, image)
                         pd_data = pd.DataFrame(data=result, columns=col_name)
+                        st.balloons()
                         with container2:
                             st.image(image, width=500)
                         with option_col2:
