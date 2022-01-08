@@ -12,7 +12,7 @@ from models import loader
 st.set_page_config(layout="wide")
 
 
-@st.cache(allow_output_mutation=True, show_spinner=False)
+@st.cache(allow_output_mutation=True, show_spinner=True)
 def load_model():
     det, rec, kie = loader()
     return det, rec, kie

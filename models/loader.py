@@ -46,7 +46,7 @@ def load_kie():
     pretrained_path = r'data/kie/pretrained/kie_pretrained.pth'
     weight = pretrained_path
     if not os.path.isfile(pretrained_path):
-        weight = gdown.download(det_id, pretrained_path)
+        weight = gdown.download(kie_id, pretrained_path)
     else:
         print("File exist: {}".format(pretrained_path))
     return KIEPredictor(config_path, weight)
