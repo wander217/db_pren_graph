@@ -34,7 +34,6 @@ def load_rec():
         print("File exist: {}".format(pretrained_path))
     config = Cfg.load_config_from_name('vgg_transformer')
     config['weights'] = weight
-    config['cnn']['pretrained'] = False
     del config['cnn']['pretrained']
     config['device'] = 'cpu'
     config['predictor']['beamsearch'] = False

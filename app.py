@@ -8,6 +8,7 @@ import cv2 as cv
 import networkx as nx
 import pandas as pd
 from models import loader
+import warnings
 
 st.set_page_config(layout="wide")
 
@@ -151,4 +152,5 @@ def main():
 
 
 if __name__ == "__main__":
+    warnings.filterwarnings("ignore")
     main()
