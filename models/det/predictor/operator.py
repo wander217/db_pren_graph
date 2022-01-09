@@ -28,7 +28,7 @@ def normalize(image: np.ndarray) -> Tensor:
     return image.unsqueeze(0)
 
 
-def expand(box: np.ndarray, ratio: float = 2) -> np.ndarray:
+def expand(box: np.ndarray, ratio: float = 1.5) -> np.ndarray:
     polygon = Polygon(box)
     dist: float = polygon.area * ratio / polygon.length
     subject: list = [tuple(point) for point in box]

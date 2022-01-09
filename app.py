@@ -22,7 +22,7 @@ def load_model():
 
 def join_bbox(bbox_list):
     pairs = []
-    threshold_y = 5
+    threshold_y = 10
     threshold_x = 20
     check = np.zeros(len(bbox_list))
     for i in range(len(bbox_list)):
