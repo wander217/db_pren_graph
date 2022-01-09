@@ -123,9 +123,9 @@ def main():
         container2 = st.container()
         with container1:
             with st.form("form1", clear_on_submit=True):
-                content_file = st.file_uploader("Upload your image here",
+                content_file = st.file_uploader("Tải lên file ảnh chứa hóa đơn",
                                                 type=["jpg", "jpeg", "png"])
-                submit = st.form_submit_button("Upload")
+                submit = st.form_submit_button("Scan")
                 if torch.cuda.is_available():
                     st.text("Your device: GPU")
                 else:

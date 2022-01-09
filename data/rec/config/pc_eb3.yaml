@@ -5,7 +5,7 @@ clip_grad_norm: 1
 
 alphabet:
   path: 'data/rec/config/viet_alphabet.txt'
-  max_len: 26
+  max_len: 201
 
 model:
   backbone:
@@ -15,22 +15,22 @@ model:
     dropout: 0.1
 
 train:
-  batch_size: 32
+  batch_size: 64
   num_workers: 8
   drop_last: True
   shuffle: True
   pin_memory: False
   dataset:
-    path: '../input/newocr/train'
+    path: '../input/long-text'
 
 valid:
-  batch_size: 32
+  batch_size: 64
   num_workers: 8
   drop_last: True
   shuffle: False
   pin_memory: False
   dataset:
-    path: '../input/newocr/valid'
+    path: '../input/long-text'
 
 optimizer:
   name: 'Adam'
