@@ -9,6 +9,7 @@ import networkx as nx
 import pandas as pd
 from models import loader
 import warnings
+from shapely.geometry import Polygon
 
 st.set_page_config(layout="wide")
 
@@ -21,17 +22,28 @@ def load_model():
 
 def join_bbox(bbox_list):
     pairs = []
-    threshold_y = 4
+    threshold_y = 5
     threshold_x = 20
     check = np.zeros(len(bbox_list))
     for i in range(len(bbox_list)):
         x_min_i, y_min_i, x_max_i, y_max_i = bbox_list[i]
+        polygon1 = Polygon(np.array([
+            [x_min_i, y_min_i], [x_min_i, y_max_i],
+            [x_max_i, y_max_i], [x_max_i, y_min_i]
+        ]))
         for j in range(i + 1, len(bbox_list)):
             x_min_j, y_min_j, x_max_j, y_max_j = bbox_list[j]
+            polygon2 = Polygon(np.array([
+                [x_min_j, y_min_j], [x_min_j, y_max_j],
+                [x_max_j, y_max_j], [x_max_j, y_min_j]
+            ]))
+            iou = polygon1.intersection(polygon2).area / polygon1.union(polygon2).area
             cond1 = abs(y_min_i - y_min_j) < threshold_y
-            cond2 = abs(x_min_i - x_max_j) < threshold_x
-            cond3 = abs(x_max_i - x_min_j) < threshold_x
-            if cond1 and (cond2 or cond3):
+            cond2 = (y_min_i >= y_min_j) and (y_max_i <= y_max_j)
+            cond3 = (y_min_j >= y_min_i) and (y_max_j <= y_max_i)
+            cond4 = iou > 0
+            cond5 = min(abs(x_min_i - x_max_j), abs(x_min_j - x_max_i)) < threshold_x
+            if (cond1 or cond2 or cond3) and (cond4 or cond5):
                 pairs.append((i, j))
                 check[i] = check[j] = 1
     g = nx.Graph()
@@ -100,7 +112,6 @@ def main():
     pd_data = pandas.DataFrame(data=[[("\t" * 30) + "Empty" + ("\t" * 30),
                                       ("\t" * 25) + "Empty" + ("\t" * 25)]], columns=col_name)
     with option_col2:
-        #     st.table(pd_data)
         placeholder = st.dataframe(pd_data)
 
     total_text = None
@@ -122,8 +133,6 @@ def main():
                 if content_file is not None:
                     pil_img = Image.open(content_file)
                     image = np.array(pil_img)
-                    # if image.shape[0] < image.shape[1]:
-                    #     image = cv.rotate(image, cv.ROTATE_90_CLOCKWISE)
 
                     if submit:
                         if total_text is not None:
@@ -145,10 +154,12 @@ def main():
                             placeholder.empty()
                             placeholder = st.dataframe(pd_data, width=1200)
                         wait_text.empty()
-                        total_text = st.text("Total time: {}s".format(det_time + rec_time + kie_time))
-                        det_text = st.text("Detection time: {}s".format(det_time))
-                        rec_text = st.text("Recognition time: {}s".format(rec_time))
-                        kie_text = st.text("Key extract time: {}s".format(kie_time))
+                        st.text("Total time: {}s".format(det_time + rec_time + kie_time))
+                        st.text("Detection time: {}s".format(det_time))
+                        st.text("Recognition time: {}s".format(rec_time))
+                        st.text("Key extract time: {}s".format(kie_time))
+                        print("Complete !")
+                        print(">" * 100)
 
 
 if __name__ == "__main__":
